@@ -61,8 +61,12 @@ bool CDosCmdHelper::ExcutuCmdRet( const string strCmd )
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 	sa.lpSecurityDescriptor = NULL;
 	sa.bInheritHandle = TRUE;
-	if (!CreatePipe(&hRead,&hWrite,&sa,0))
+	if (!CreatePipe(&hRead,&hWrite,&sa,20480))
 	{
+		//When a process uses WriteFile to write to an anonymous pipe, 
+		//the write operation is not completed until all bytes are written. 
+		//If the pipe buffer is full before all bytes are written, 
+		//WriteFile does not return until another process or thread uses ReadFile to make more buffer space available.
 		cerr<<"error Error On CreatePipe"<<endl;
 		return false;
 	}
@@ -77,7 +81,7 @@ bool CDosCmdHelper::ExcutuCmdRet( const string strCmd )
 	si.hStdError = hWrite;
 	si.hStdOutput = hWrite;
 	si.wShowWindow = SW_HIDE;
-	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+	si.dwFlags = STARTF_USESTDHANDLES;
 	if (!CreateProcess(NULL,const_cast<char *>(strCmd.c_str()),NULL,NULL,TRUE,NULL,NULL,NULL,&si,&pi))
 	{
 		cerr<<"error Create cmd excute Process Failed"<<endl;
@@ -90,7 +94,7 @@ bool CDosCmdHelper::ExcutuCmdRet( const string strCmd )
 	{
 		cerr<<"error wait cmd excute Failed"<<endl;
 		return false;
-	}
+	}	
 
 	//从管道中读出dos命令执行结果并解析打印
 	char buffer[5120];
