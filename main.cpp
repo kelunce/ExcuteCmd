@@ -76,7 +76,8 @@ void RunNetStat(int argc, char *argv[])
 	//获取指定进程的id
 	vector<DWORD> vecPID;
 	for (int i = 1; i  < argc; ++i)
-	{		
+	{	
+		vecPID.clear();	
 		string strPName(argv[i]);		
 		if(dosCmd.GetPIDByName(strPName,vecPID))
 		{
