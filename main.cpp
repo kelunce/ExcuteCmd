@@ -12,7 +12,7 @@ void SwitchService(const string strName);
 int main(int argc, char *argv[])
 {
 	
-	if(argc == 0)
+	if(argc == 1)
 	{
 		PrintUsage();
 		system("pause");
